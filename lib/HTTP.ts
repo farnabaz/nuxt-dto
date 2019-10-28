@@ -1,7 +1,28 @@
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { AxiosRequestConfig, AxiosResponse, Method } from "axios";
 import ApiResponse from "./ApiResponse";
 
+enum HttpMethods {
+  POST = "post",
+  PUT = "put",
+  DELETE = "delete"
+}
+
+interface SendData {
+  <T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<any>>;
+  <T>(clazz: (new() => T) | [any], url: string, data?: any, config?: AxiosRequestConfig): Promise<T>;
+  <T>(
+    clazz: ((new() => T) | [any]) | string,
+    url?: string | AxiosRequestConfig,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T | ApiResponse>;
+}
+
 export default class HTTP {
+    public put = this.setMethod(HttpMethods.PUT);
+    public post = this.setMethod(HttpMethods.POST);
+    public ["delete"] = this.setMethod(HttpMethods.DELETE);
+
     private responseHandler: new(context: any) => ApiResponse;
     private context: any;
     constructor(context: any, responseHandler?: new(axios: AxiosResponse) => ApiResponse) {
@@ -31,49 +52,25 @@ export default class HTTP {
       return apiResponse.model<T>($clazz as new() => T);
     }
 
-    public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<any>>;
-    public async post<T>(clazz: (new() => T) | [any], url: string, data?: any, config?: AxiosRequestConfig): Promise<T>;
+    private setMethod(method: Method): SendData {
+      return async <T>(
+        clazz: ((new() => T) | [any]) | string,
+        url?: string | AxiosRequestConfig,
+        data?: any,
+        config?: AxiosRequestConfig
+      ): Promise<T | ApiResponse> => {
+        let [$clazz, $url, $data, $config] = [clazz, url, data, config];
+        if (typeof clazz === "string") {
+          [$clazz, $url, $data, $config] = [undefined, clazz as string, url as any, data as AxiosRequestConfig];
+        }
 
-    public async post<T>(
-      clazz: ((new() => T) | [any]) | string,
-      url?: string | AxiosRequestConfig,
-      data?: any,
-      config?: AxiosRequestConfig
-    ): Promise<T | ApiResponse> {
-      let [$clazz, $url, $data, $config] = [clazz, url, data, config];
-      if (typeof clazz === "string") {
-        [$clazz, $url, $data, $config] = [undefined, clazz as string, url as any, data as AxiosRequestConfig];
-      }
+        const axiosResponse = await this.context.$axios[method.toLowerCase()]($url as string, $data, $config);
+        const apiResponse = new this.responseHandler(axiosResponse);
+        if ($clazz === undefined) {
+          return apiResponse;
+        }
 
-      const axiosResponse = await this.context.$axios.post($url as string, $data, $config);
-      const apiResponse = new this.responseHandler(axiosResponse);
-      if ($clazz === undefined) {
-        return apiResponse;
-      }
-
-      return apiResponse.model<T>($clazz as new() => T);
-    }
-
-    public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<any>>;
-    public async put<T>(clazz: (new() => T) | [any], url: string, data?: any, config?: AxiosRequestConfig): Promise<T>;
-
-    public async put<T>(
-      clazz: ((new() => T) | [any]) | string,
-      url?: string | AxiosRequestConfig,
-      data?: any,
-      config?: AxiosRequestConfig
-    ): Promise<T | ApiResponse> {
-      let [$clazz, $url, $data, $config] = [clazz, url, data, config];
-      if (typeof clazz === "string") {
-        [$clazz, $url, $data, $config] = [undefined, clazz as string, url as any, data as AxiosRequestConfig];
-      }
-
-      const axiosResponse = await this.context.$axios.put($url as string, $data, $config);
-      const apiResponse = new this.responseHandler(axiosResponse);
-      if ($clazz === undefined) {
-        return apiResponse;
-      }
-
-      return apiResponse.model<T>($clazz as new() => T);
+        return apiResponse.model<T>($clazz as new() => T);
+      };
     }
 }
