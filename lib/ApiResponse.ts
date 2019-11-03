@@ -18,7 +18,9 @@ export default class ApiResponse implements AxiosResponse {
     this.request = response.request;
   }
 
-  public model<T>(modelClass: new() => T): T {
+  public model<T>(modelClass: [new() => T]): T[];
+  public model<T>(modelClass: new() => T): T;
+  public model<T>(modelClass: (new() => T) | [new() => T]): T | T[] {
     return mapModel(modelClass, this.data);
   }
 

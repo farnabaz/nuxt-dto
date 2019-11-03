@@ -40,21 +40,25 @@ export interface IJsonMetaData<T> {
     clazz?: new() => T;
 }
 
-export default function mapModel<T>(type: (new() => T) | [any], jsonObject: any): T {
-    if (!jsonObject) {
-        return;
+function set<T>(obj: T, key: string, value: any) {
+    Object.assign(obj, {
+        [key]: value
+    });
+}
+
+export function mapArray<T>(type: (new() => T), json: any): T[] {
+    if (!json || !isArray(json)) {
+        return [];
     }
-    if (isArray(type)) {
-        if (isArray(jsonObject)) {
-            const c = type as any;
-            const itemClass = (c as Array<new() => T>)[0];
-            return jsonObject.map((item: any) => mapModel(itemClass, item));
-        }
-        return;
-    }
-    const clazz = type as (new(arg?: any) => T);
-    if (typeof clazz.prototype.__map === "undefined" && typeof clazz === "function") {
-        return new clazz(jsonObject);
+    const jsonArray = json as any[];
+    return jsonArray.map<T>(
+        (item) => mapObject<T>(type, item)
+    );
+}
+
+export function mapObject<T>(clazz: new() => T, jsonObject: any): T {
+    if (jsonObject === null || typeof jsonObject !== "object") {
+        return undefined;
     }
     const data: PropsMap = clazz.prototype.__map || {};
     const obj = new clazz();
@@ -68,21 +72,19 @@ export default function mapModel<T>(type: (new() => T) | [any], jsonObject: any)
             throw new Error(`Cannot find property '${propertyKey}' from ${clazz.name}`);
         }
 
-        if (!map.type || isPrimitive(map.type)) {
-            Object.assign(obj, {[key]: value});
-        } else if (isArray(map.type)) {
-            if (isArray(value)) {
-                const itemClass = (map.type as Array<new() => T>)[0];
-                Object.assign(obj, {[key]: value.map((item: any) => mapModel(itemClass, item))});
-            } else {
-                Object.assign(obj, {[key]: []});
-            }
+        let model;
+        if (!map.type || isPrimitive(value)) {
+            model = value;
         } else {
-            Object.assign(obj, {[key]: mapModel(map.type as new() => T, value)});
+            model = mapModel(map.type, value);
         }
+
+        set(obj, key, model);
     });
+
     return obj;
 }
+
 export function isPrimitive(obj: any) {
     switch (typeof obj) {
         case "string":
@@ -108,4 +110,23 @@ export function isArray(object: any) {
     } else {
         return !!(object instanceof Array);
     }
+}
+
+export function mapModel<T>(type: [(new() => T)], jsonObject: any): T[];
+export function mapModel<T>(type: (new() => T), jsonObject: any): T;
+export default function mapModel<T>(type: (new() => T) | [(new() => T)], jsonObject: any): T | T[] {
+    if (isArray(type)) {
+        const itemClass = (type as [(new() => T)])[0];
+        return mapArray<T>(itemClass, jsonObject);
+    }
+
+    const clazz = type as (new(arg?: any) => T);
+    /**
+     * return new instance of `clazz` if property map does not available
+     */
+    if (typeof clazz.prototype.__map === "undefined" && typeof clazz === "function") {
+        return new clazz(jsonObject);
+    }
+
+    return mapObject(clazz, jsonObject);
 }
