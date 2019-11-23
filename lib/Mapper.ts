@@ -99,7 +99,8 @@ export function isPrimitive(obj: any) {
     }
     return !!(obj instanceof String || obj === String ||
     obj instanceof Number || obj === Number ||
-    obj instanceof Boolean || obj === Boolean || obj === undefined);
+    obj instanceof Boolean || obj === Boolean ||
+    obj === undefined || obj === null);
 }
 
 export function isArray(object: any) {
