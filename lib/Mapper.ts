@@ -1,5 +1,5 @@
 export interface PropMap {
-    path?: string;
+    path?: string | ((arg: any) => any);
     type?: (new() => any) | [any];
     required?: boolean;
 }
@@ -73,7 +73,14 @@ export function mapObject<T>(clazz: new() => T, jsonObject: any): T {
     Object.keys(data).forEach((key) => {
         const map = data[key];
         const propertyKey = map.path || key;
-        const value = jsonObject[propertyKey];
+        let value;
+
+        if (typeof propertyKey === "function") {
+            const f = propertyKey as (arg: any) => any;
+            value = f(jsonObject);
+        } else {
+            value = jsonObject[propertyKey];
+        }
 
         if (map.required && value === undefined) {
             throw new Error(`Cannot find property '${propertyKey}' from ${clazz.name}`);
