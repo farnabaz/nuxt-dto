@@ -10,10 +10,17 @@ export interface PropsMap {
 
 export interface ModelData {
     props?: PropsMap;
+    request?: ModelRequest;
+}
+
+export interface ModelRequest {
+    path: string;
+    method: "post" | "put" | "patch" | "delete" | "get" | "head";
 }
 
 export function Model(data: ModelData) {
     return function mapperDecorator<T extends new(...args: any[]) => {}>(constructor: T) {
+        constructor.prototype.__request = data.request;
         const map = Object.assign({}, constructor.prototype.__map || {}, data.props || {});
         constructor.prototype.toJSON = function toJSON() {
             return Object.keys(map).reduce((json: {[key: string]: any}, key: string) => {
