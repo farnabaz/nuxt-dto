@@ -1,7 +1,9 @@
 import { AxiosRequestConfig, AxiosResponse, Method } from "axios";
 import ApiResponse from "./ApiResponse";
+import { ModelRequest } from "./Mapper";
+import { parseTemplate } from "./utils";
 
-enum HttpMethods {
+export enum HttpMethods {
   POST = "post",
   PUT = "put",
   PATCH = "patch",
@@ -27,10 +29,15 @@ interface RequestMethodWithData {
   <T>(clazz: [new() => T], url: string, data?: any, config?: AxiosRequestConfig): Promise<T[]>;
   <T>(
     clazz: ((new() => T) | [(new() => T)]) | string,
-    url?: string | AxiosRequestConfig,
-    data?: any,
+    url?: string | AxiosRequestConfig | any,
+    data?: any | AxiosRequestConfig,
     config?: AxiosRequestConfig
   ): Promise<T |T[] | ApiResponse>;
+}
+interface FetchOptions {
+  params?: any;
+  data?: any;
+  config?: AxiosRequestConfig;
 }
 
 export default class HTTP {
@@ -48,6 +55,22 @@ export default class HTTP {
   constructor(context: any, responseHandler?: new(axios: AxiosResponse) => ApiResponse) {
     this.context = context;
     this.responseHandler = responseHandler || ApiResponse;
+  }
+
+  public async fetch<T>(clazz: (new() => T), options: FetchOptions = {}): Promise<T> {
+    const request = clazz.prototype.__request as ModelRequest;
+    const url = parseTemplate(request.path, options.params || {});
+    switch (request.method) {
+      case HttpMethods.GET: return this.get<T>(clazz, url, options.data);
+      case HttpMethods.HEAD: return this.head(clazz, url, options.data);
+      case HttpMethods.DELETE: return this.delete(clazz, url, options.data);
+
+      case HttpMethods.PUT: return this.put(clazz, url, options.data, options.config);
+      case HttpMethods.POST: return this.post(clazz, url, options.data, options.config);
+      case HttpMethods.PATCH: return this.patch(clazz, url, options.data, options.config);
+
+      default: return null;
+    }
   }
 
   private createMethod(method: Method): RequestMethod {

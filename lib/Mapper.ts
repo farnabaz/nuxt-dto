@@ -1,5 +1,5 @@
 export interface PropMap {
-    path?: string;
+    path?: string | ((arg: any) => any);
     type?: (new() => any) | [any];
     required?: boolean;
 }
@@ -10,10 +10,17 @@ export interface PropsMap {
 
 export interface ModelData {
     props?: PropsMap;
+    request?: ModelRequest;
+}
+
+export interface ModelRequest {
+    path: string;
+    method: "post" | "put" | "patch" | "delete" | "get" | "head";
 }
 
 export function Model(data: ModelData) {
     return function mapperDecorator<T extends new(...args: any[]) => {}>(constructor: T) {
+        constructor.prototype.__request = data.request;
         const map = Object.assign({}, constructor.prototype.__map || {}, data.props || {});
         constructor.prototype.toJSON = function toJSON() {
             return Object.keys(map).reduce((json: {[key: string]: any}, key: string) => {
@@ -66,7 +73,14 @@ export function mapObject<T>(clazz: new() => T, jsonObject: any): T {
     Object.keys(data).forEach((key) => {
         const map = data[key];
         const propertyKey = map.path || key;
-        const value = jsonObject[propertyKey];
+        let value;
+
+        if (typeof propertyKey === "function") {
+            const f = propertyKey as (arg: any) => any;
+            value = f(jsonObject);
+        } else {
+            value = jsonObject[propertyKey];
+        }
 
         if (map.required && value === undefined) {
             throw new Error(`Cannot find property '${propertyKey}' from ${clazz.name}`);
