@@ -1,3 +1,5 @@
+import get from 'lodash.get'
+
 export interface PropMap {
     path?: string | ((arg: any) => any);
     type?: (new() => any) | [any];
@@ -79,7 +81,7 @@ export function mapObject<T>(clazz: new() => T, jsonObject: any): T {
             const f = propertyKey as (arg: any) => any;
             value = f(jsonObject);
         } else {
-            value = jsonObject[propertyKey];
+            value = get(jsonObject, propertyKey);
         }
 
         if (map.required && value === undefined) {
