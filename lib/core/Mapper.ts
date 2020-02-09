@@ -67,7 +67,7 @@ export function mapArray<T>(type: (new() => T), json: any): T[] {
 
 export function mapObject<T>(clazz: new() => T, jsonObject: any): T {
     if (jsonObject === null || typeof jsonObject !== "object") {
-        return undefined;
+        return new clazz();
     }
     const data: PropsMap = clazz.prototype.__map || {};
     const obj = new clazz();

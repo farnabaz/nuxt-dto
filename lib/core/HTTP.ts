@@ -61,7 +61,6 @@ export default class HTTP {
     const request = clazz.prototype.__request as ModelRequest;
     const url = parseTemplate(request.path, options.params || {});
     switch (request.method) {
-      case HttpMethods.GET: return this.get<T>(clazz, url, options.data);
       case HttpMethods.HEAD: return this.head(clazz, url, options.data);
       case HttpMethods.DELETE: return this.delete(clazz, url, options.data);
 
@@ -69,7 +68,7 @@ export default class HTTP {
       case HttpMethods.POST: return this.post(clazz, url, options.data, options.config);
       case HttpMethods.PATCH: return this.patch(clazz, url, options.data, options.config);
 
-      default: return null;
+      default: return this.get<T>(clazz, url, options.data);
     }
   }
 
@@ -81,12 +80,12 @@ export default class HTTP {
     ): Promise<T | T[] | ApiResponse> => {
       let [$clazz, $url, $config] = [clazz, url, config];
       if (typeof clazz === "string") {
-        [$clazz, $url, $config] = [undefined, clazz as string, url as AxiosRequestConfig];
+        [$clazz, $url, $config] = ["NO_CLASS", clazz as string, url as AxiosRequestConfig];
       }
 
       const axiosResponse = await this.context.$axios[method.toLowerCase()]($url as string, $config);
       const apiResponse = new this.responseHandler(axiosResponse);
-      if ($clazz === undefined) {
+      if ($clazz === "NO_CLASS") {
         return apiResponse;
       }
 
@@ -107,12 +106,12 @@ export default class HTTP {
     ): Promise<T | T[] | ApiResponse> => {
       let [$clazz, $url, $data, $config] = [clazz, url, data, config];
       if (typeof clazz === "string") {
-        [$clazz, $url, $data, $config] = [undefined, clazz as string, url as any, data as AxiosRequestConfig];
+        [$clazz, $url, $data, $config] = ["NO_CLASS", clazz as string, url as any, data as AxiosRequestConfig];
       }
 
       const axiosResponse = await this.context.$axios[method.toLowerCase()]($url as string, $data, $config);
       const apiResponse = new this.responseHandler(axiosResponse);
-      if ($clazz === undefined) {
+      if ($clazz === "NO_CLASS") {
         return apiResponse;
       }
 

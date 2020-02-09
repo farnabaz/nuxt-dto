@@ -4,7 +4,7 @@ import Handler from "<%= options.handler %>"; /*
 <% } %> */
 import { Plugin } from "@nuxt/types";
 // @ts-ignore
-import { HTTP } from "nuxt-dto";
+import HTTP from "./HTTP.js";
 
 const myPlugin: Plugin = (context, injext) => {
     let ResponseHandler: any;
