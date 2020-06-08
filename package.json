@@ -27,7 +27,7 @@
     "@nuxt/typescript-build": "^1.0.2",
     "@nuxtjs/axios": "^5.11.0",
     "@types/lodash.get": "^4.4.6",
-    "@types/node": "^13.13.10",
+    "@types/node": "^13.13.11",
     "tsc": "^1.20150623.0"
   }
 }
