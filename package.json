@@ -24,10 +24,10 @@
     "tslint": "^6.1.2",
     "typescript": "^3.9.5",
     "axios": "^0.19.2",
-    "@nuxt/typescript-build": "^1.0.2",
+    "@nuxt/typescript-build": "^1.0.3",
     "@nuxtjs/axios": "^5.11.0",
     "@types/lodash.get": "^4.4.6",
-    "@types/node": "^13.13.11",
+    "@types/node": "^13.13.12",
     "tsc": "^1.20150623.0"
   }
 }
