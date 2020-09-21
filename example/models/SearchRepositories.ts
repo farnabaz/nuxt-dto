@@ -10,11 +10,11 @@ import Repository from "./Repository";
 
 export default class SearchRepositoriess {
     @Prop({ type: Number, path: 'total_count' })
-    totalCount: number;
+    totalCount!: number;
 
     @Prop({ type: Boolean, path: 'incomplete_results' })
-    incompleteResults: boolean;
+    incompleteResults!: boolean;
 
     @Prop({ type: [Repository], path: 'items' })
-    items: Repository[];
+    items!: Repository[];
 }

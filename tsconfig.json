@@ -1,25 +1,26 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
-    "module": "es2015",
-    "target": "es5",
-    "noImplicitAny": true,
+    "target": "esnext",
+    "module": "esnext",
     "moduleResolution": "node",
-    "sourceMap": false,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": true,
     "outDir": "dist",
-    "baseUrl": ".",
     "declaration": true,
-    "paths": {
-      "*": [
-        "node_modules/*"
-      ]
-    }
+    "baseUrl": ".",
+    "types": [
+      "@types/node",
+      "@types/lodash.get",
+    ]
   },
-  "files": [
-    "./lib/module.ts",
-    "./lib/plugin.ts"
+  "include": [
+    "./lib",
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }

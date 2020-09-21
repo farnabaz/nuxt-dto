@@ -17,8 +17,8 @@
 import Vue from "vue"
 import Component from "nuxt-class-component"
 
-import SearchRepositories from "~/models/SearchRepositories";
-import Respository from "~/models/Respository";
+import SearchRepositories from "../models/SearchRepositories";
+import Respository from "../models/Repository";
 
 @Component({
     name: 'IndexPage',
