@@ -9,12 +9,10 @@ export default {
     '@nuxt/typescript-build'
   ],
   build: {
-    extend (config, { isDev, isClient }) {
-  
-       config.node = {
-          fs: 'empty'
-        }
-
+    extend (config) {
+      config.node = {
+        fs: 'empty'
+      }
     }
   },
   /*
