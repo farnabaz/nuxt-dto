@@ -1,8 +1,6 @@
-import { Prop } from "../../lib/module"
-
+import { Prop } from '../../lib/module'
 
 export default class Repository {
-
     @Prop({ type: String, path: 'full_name' })
     name!: string;
 

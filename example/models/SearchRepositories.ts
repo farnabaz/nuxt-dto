@@ -1,11 +1,11 @@
-import { Prop, Model } from "../../lib/module"
-import Repository from "./Repository";
+import { Prop, Model } from '../../lib/module'
+import Repository from './Repository'
 
 @Model({
-    request: {
-        method: 'get',
-        path: 'https://api.github.com/search/repositories?q=${query}+language:${language}&sort=stars&order=desc'
-    }
+  request: {
+    method: 'get',
+    path: 'https://api.github.com/search/repositories?q=${query}+language:${language}&sort=stars&order=desc'
+  }
 })
 
 export default class SearchRepositoriess {
