@@ -15,6 +15,10 @@ export default {
       }
     }
   },
+  // Nuxt.js plugins
+  plugins: [
+    '~/plugins/interceptors.ts'
+  ],
   /*
   ** Nuxt.js modules
   */
