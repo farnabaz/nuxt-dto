@@ -150,24 +150,4 @@ export default class HTTP {
     this.onResponseError(fn)
     this.onRequestError(fn)
   }
-
-  public installDebugInterceptors (): void {
-    this.onRequestError((error: AxiosError) => {
-      console.info('Request error:', error)
-    })
-
-    this.onResponseError((error: AxiosError) => {
-      console.info('Response error:', error)
-    })
-
-    this.onResponse((response: AxiosResponse) => {
-      console.info(
-        response.status + ':' +
-            response.config.method!.toUpperCase() + ':' +
-            response.config.url
-      )
-      console.log(response.data)
-      return response
-    })
-  }
 }
