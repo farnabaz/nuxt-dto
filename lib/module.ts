@@ -38,15 +38,26 @@ const nuxtDTOModule: Module = function module (moduleOptions: any) {
       fileName: join('nuxt-dto', file)
     })
   }
-  // Register plugin
-  this.addPlugin({
-    src: resolve(__dirname, 'plugin.js'),
-    fileName: 'nuxt-dto/plugin.js',
-    options
-  })
+
+  const plugins = [
+    'plugin.js'
+  ]
+
+  if (options.debug) {
+    plugins.unshift('logger.js')
+  }
+
+  for (const path of plugins) {
+    this.addPlugin({
+      src: resolve(__dirname, path),
+      fileName: 'nuxt-dto/' + path,
+      options
+    })
+  }
 }
 
 export { PropsMap, PropMap, Prop, Model, default as mapModel } from './core/Mapper'
 export { default as HTTP } from './core/HTTP'
 export { default as ApiResponse } from './core/ApiResponse'
+export { default as logger } from './logger'
 export default nuxtDTOModule

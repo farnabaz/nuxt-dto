@@ -1,4 +1,4 @@
-import type { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
+import type { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from 'axios'
 import ApiResponse from './ApiResponse'
 import { ModelRequest } from './Mapper'
 import { parseTemplate } from './utils'
@@ -120,5 +120,34 @@ export default class HTTP {
 
       return apiResponse.model<T>($clazz as new() => T)
     }
+  }
+
+  public onRequest (fn: Function): void {
+    this.context.$axios.interceptors.request.use((config: AxiosRequestConfig) => {
+      return fn(config) || config
+    }, undefined)
+  }
+
+  public onResponse (fn: Function): void {
+    this.context.$axios.interceptors.response.use((response: AxiosResponse) => {
+      return fn(response) || response
+    }, undefined)
+  }
+
+  public onResponseError (fn: Function): void {
+    this.context.$axios.interceptors.response.use(undefined, (error: AxiosError) => {
+      return fn(error) || Promise.reject(error)
+    })
+  }
+
+  public onRequestError (fn: Function): void {
+    this.context.$axios.interceptors.request.use(undefined, (error: AxiosError) => {
+      return fn(error) || Promise.reject(error)
+    })
+  }
+
+  public onError (fn: Function): void {
+    this.onResponseError(fn)
+    this.onRequestError(fn)
   }
 }

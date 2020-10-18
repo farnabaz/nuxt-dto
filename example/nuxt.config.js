@@ -19,9 +19,12 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
-    '@nuxtjs/axios',
+    // This module must be imported before `@nuxtjs/axios`
+    // since it depends on it to function correctly.
     ['../dist/module', {
-      handler: '~/utils/OurApiResponse'
-    }]
+      handler: '~/utils/OurApiResponse',
+      debug: true
+    }],
+    '@nuxtjs/axios'
   ]
 }
