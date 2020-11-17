@@ -14,6 +14,8 @@
     "types": [
       "@types/node",
       "@types/lodash.get",
+      "@types/jest",
+      "@nuxt/types",
     ]
   },
   "include": [
