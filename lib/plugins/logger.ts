@@ -1,7 +1,6 @@
-import { AxiosError, AxiosResponse } from 'axios'
+import type { AxiosError, AxiosResponse } from 'axios'
+import type HTTP from '../core/HTTP'
 import consola from 'consola'
-// @ts-ignore
-import type HTTP from './HTTP'
 
 const logger = consola.withScope('nuxt-dto')
 

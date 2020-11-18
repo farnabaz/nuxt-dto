@@ -1,11 +1,8 @@
 import { resolve, join } from 'path'
 import { readdirSync } from 'fs'
+import HTTP from './core/HTTP'
 import type { Module } from '@nuxt/types'
 import type { AxiosInstance } from 'axios'
-
-import HTTP from './core/HTTP'
-
-const libRoot = __dirname
 
 declare module '@nuxt/types' {
     interface Context {
@@ -30,27 +27,35 @@ const nuxtDTOModule: Module = function module (moduleOptions: any) {
     ...moduleOptions
   }
 
-  const coreRoot = resolve(libRoot, 'core')
+  const directoriesToSyncInBuildDir = [
+    'core',
+    'plugins'
+  ]
 
-  for (const file of readdirSync(coreRoot)) {
-    this.addTemplate({
-      src: resolve(coreRoot, file),
-      fileName: join('nuxt-dto', file)
-    })
+  const namespace = 'nuxt-dto'
+
+  for (const dir of directoriesToSyncInBuildDir) {
+    const path = resolve(__dirname, dir)
+    for (const file of readdirSync(path)) {
+      this.addTemplate({
+        src: resolve(path, file),
+        fileName: join(namespace, dir, file)
+      })
+    }
   }
 
   const plugins = [
-    'plugin.js'
+    'plugins/http.js'
   ]
 
   if (options.debug) {
-    plugins.unshift('logger.js')
+    plugins.unshift('plugins/logger.js')
   }
 
   for (const path of plugins) {
     this.addPlugin({
       src: resolve(__dirname, path),
-      fileName: 'nuxt-dto/' + path,
+      fileName: join(namespace, path),
       options
     })
   }
@@ -59,5 +64,6 @@ const nuxtDTOModule: Module = function module (moduleOptions: any) {
 export { PropsMap, PropMap, Prop, Model, default as mapModel } from './core/Mapper'
 export { default as HTTP } from './core/HTTP'
 export { default as ApiResponse } from './core/ApiResponse'
-export { default as logger } from './logger'
+export { default as logger } from './plugins/logger'
+(nuxtDTOModule as any).meta = require('../package.json')
 export default nuxtDTOModule
