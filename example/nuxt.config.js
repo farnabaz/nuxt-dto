@@ -1,11 +1,10 @@
+const { resolve } = require('path')
 
 export default {
-  mode: 'universal',
-  /*
-  ** Nuxt.js dev-modules
-  */
+  rootDir: resolve(__dirname, '../'),
+  buildDir: resolve(__dirname, '.nuxt'),
+  srcDir: __dirname,
   buildModules: [
-    // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxt/typescript-build'
   ],
   build: {
@@ -15,15 +14,9 @@ export default {
       }
     }
   },
-  /*
-  ** Nuxt.js modules
-  */
   modules: [
-    // This module must be imported before `@nuxtjs/axios`
-    // since it depends on it to function correctly.
     ['../dist/module', {
-      handler: '~/utils/OurApiResponse',
-      debug: true
+      handler: '~/utils/OurApiResponse'
     }],
     '@nuxtjs/axios'
   ]

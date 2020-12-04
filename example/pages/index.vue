@@ -30,6 +30,7 @@ export default class extends Vue {
 
     mounted () {
       this.doSearch()
+      console.log(this)
     }
 
     async doSearch () {
