@@ -34,10 +34,13 @@ interface RequestMethodWithData {
     config?: AxiosRequestConfig
   ): Promise<T |T[] | ApiResponse>;
 }
+interface FetchConfig extends AxiosRequestConfig {
+  useCache?: boolean
+}
 interface FetchOptions {
   params?: any;
   data?: any;
-  config?: AxiosRequestConfig;
+  config?: FetchConfig;
 }
 
 export default class HTTP {
@@ -67,7 +70,7 @@ export default class HTTP {
       case HttpMethods.POST: return this.post(clazz, url, options.data, options.config)
       case HttpMethods.PATCH: return this.patch(clazz, url, options.data, options.config)
 
-      default: return this.get<T>(clazz, url, options.data)
+      default: return this.get<T>(clazz, url, options.config)
     }
   }
 
