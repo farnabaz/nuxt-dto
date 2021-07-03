@@ -6,8 +6,7 @@
   "typings": "dist/module.d.ts",
   "types": "dist/module.d.ts",
   "files": [
-    "dist/*.js",
-    "dist/*.d.ts"
+    "dist"
   ],
   "scripts": {
     "build": "rm -rf dist && tsc",
