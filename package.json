@@ -35,7 +35,7 @@
     "nuxt-class-component": "^1.3.0",
     "nuxt-edge": "^2.14.7-26712039.c75ac80f",
     "standard-version": "^9.3.0",
-    "tsc": "^1.20150623.0",
+    "tsc": "^2.0.4",
     "typescript": "^4.0.3"
   }
 }
