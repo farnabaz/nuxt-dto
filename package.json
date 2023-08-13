@@ -16,7 +16,7 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
-    "consola": "^2.15.0",
+    "consola": "^3.2.3",
     "lodash.get": "^4.4.2"
   },
   "devDependencies": {
